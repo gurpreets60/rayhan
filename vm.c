@@ -6,21 +6,25 @@
 // This is a simple 16-bit virtual machine.
 // It has a 65kb memory and a few registers.
 
-// Memory: 65kb (65536 bytes)
-unsigned short memory[65536];
+// Memory: 65kb (65536 words), dynamically allocated and passed to run_vm.
 
 // We can store the register values in an array.
 unsigned short registers[NUM_REGISTERS];
 
 
-void run_vm() {
+void run_vm(unsigned short* memory_ptr) {
     printf("Virtual machine starting execution...\n");
+
+    // Initialize all registers to 0
+    for (int i = 0; i < NUM_REGISTERS; i++) {
+        registers[i] = 0;
+    }
 
     // Fetch-decode-execute cycle
     int running = 1;
     while (running) {
         // Fetch the instruction pointed to by IP
-        unsigned short instruction = memory[registers[IP]];
+        unsigned short instruction = memory_ptr[registers[IP]];
 
         // Handle IP increment in a single place unless a jump occurs
         int ip_incremented = 0;
@@ -32,64 +36,64 @@ void run_vm() {
                 printf("HLT instruction encountered. Halting.\n");
                 break;
             case MOV: {
-                unsigned short reg = memory[registers[IP] + 1];
-                unsigned short val = memory[registers[IP] + 2];
+                unsigned short reg = memory_ptr[registers[IP] + 1];
+                unsigned short val = memory_ptr[registers[IP] + 2];
                 registers[reg] = val;
                 registers[IP] += 3;
                 ip_incremented = 1;
                 break;
             }
             case ADD: {
-                unsigned short reg = memory[registers[IP] + 1];
-                unsigned short val = memory[registers[IP] + 2];
+                unsigned short reg = memory_ptr[registers[IP] + 1];
+                unsigned short val = memory_ptr[registers[IP] + 2];
                 registers[reg] += val;
                 registers[IP] += 3;
                 ip_incremented = 1;
                 break;
             }
             case SUB: {
-                unsigned short reg = memory[registers[IP] + 1];
-                unsigned short val = memory[registers[IP] + 2];
+                unsigned short reg = memory_ptr[registers[IP] + 1];
+                unsigned short val = memory_ptr[registers[IP] + 2];
                 registers[reg] -= val;
                 registers[IP] += 3;
                 ip_incremented = 1;
                 break;
             }
             case MOV_REG_REG: {
-                unsigned short reg1 = memory[registers[IP] + 1];
-                unsigned short reg2 = memory[registers[IP] + 2];
+                unsigned short reg1 = memory_ptr[registers[IP] + 1];
+                unsigned short reg2 = memory_ptr[registers[IP] + 2];
                 registers[reg1] = registers[reg2];
                 registers[IP] += 3;
                 ip_incremented = 1;
                 break;
             }
             case ADD_REG_REG: {
-                unsigned short reg1 = memory[registers[IP] + 1];
-                unsigned short reg2 = memory[registers[IP] + 2];
+                unsigned short reg1 = memory_ptr[registers[IP] + 1];
+                unsigned short reg2 = memory_ptr[registers[IP] + 2];
                 registers[reg1] += registers[reg2];
                 registers[IP] += 3;
                 ip_incremented = 1;
                 break;
             }
             case SUB_REG_REG: {
-                unsigned short reg1 = memory[registers[IP] + 1];
-                unsigned short reg2 = memory[registers[IP] + 2];
+                unsigned short reg1 = memory_ptr[registers[IP] + 1];
+                unsigned short reg2 = memory_ptr[registers[IP] + 2];
                 registers[reg1] -= registers[reg2];
                 registers[IP] += 3;
                 ip_incremented = 1;
                 break;
             }
             case JMP: {
-                unsigned short address = memory[registers[IP] + 1];
+                unsigned short address = memory_ptr[registers[IP] + 1];
                 registers[IP] = address; // Unconditional jump
                 ip_incremented = 1;
                 break;
             }
             case CMP: { // CMP reg, val or CMP reg, reg (parser will handle this by emitting correct args)
-                unsigned short arg1_type = memory[registers[IP] + 1]; // 0 for reg, 1 for val (conceptual, parser handles actual values)
-                unsigned short arg1_val = memory[registers[IP] + 2];
-                unsigned short arg2_type = memory[registers[IP] + 3];
-                unsigned short arg2_val = memory[registers[IP] + 4];
+                unsigned short arg1_type = memory_ptr[registers[IP] + 1]; // 0 for reg, 1 for val (conceptual, parser handles actual values)
+                unsigned short arg1_val = memory_ptr[registers[IP] + 2];
+                unsigned short arg2_type = memory_ptr[registers[IP] + 3];
+                unsigned short arg2_val = memory_ptr[registers[IP] + 4];
 
                 unsigned short val1, val2;
 
@@ -109,7 +113,7 @@ void run_vm() {
                 break;
             }
             case JE: {
-                unsigned short address = memory[registers[IP] + 1];
+                unsigned short address = memory_ptr[registers[IP] + 1];
                 if (registers[FLAGS] == 1) { // If Equal flag is set
                     registers[IP] = address;
                 } else {
@@ -119,7 +123,7 @@ void run_vm() {
                 break;
             }
             case JNE: {
-                unsigned short address = memory[registers[IP] + 1];
+                unsigned short address = memory_ptr[registers[IP] + 1];
                 if (registers[FLAGS] == 0) { // If Equal flag is NOT set
                     registers[IP] = address;
                 } else {
@@ -146,4 +150,6 @@ void run_vm() {
     printf("Final value of CX: %d\n", registers[CX]);
     printf("Final value of FLAGS: %d\n", registers[FLAGS]);
 }
+
+
 

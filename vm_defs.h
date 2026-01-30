@@ -28,4 +28,7 @@ enum {
     JNE,         // 10 Jump if Not Equal (address)
 };
 
+// Function prototype for the VM execution
+void run_vm(unsigned short* memory_ptr);
+
 #endif
