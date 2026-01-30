@@ -79,12 +79,7 @@ int parse(FILE* source, unsigned short* memory, char* error_message) {
         // Use sscanf to extract parts of the line
         int num_parsed = sscanf(trimmed_line, "%s %31[^,],%s", instruction_str, arg1_str, arg2_str);
         
-        printf("DEBUG: Line %d, Trimmed_line: '%s'\n", line_num, trimmed_line);
-        printf("DEBUG: num_parsed: %d\n", num_parsed);
-        printf("DEBUG: instruction_str: '%s'\n", instruction_str);
-        if (num_parsed >= 2) printf("DEBUG: arg1_str: '%s'\n", arg1_str);
-        if (num_parsed >= 3) printf("DEBUG: arg2_str: '%s'\n", arg2_str);
-        fflush(stdout);
+
         
         // Convert instruction_str to uppercase for case-insensitive matching
         for (int i = 0; instruction_str[i]; i++) {
@@ -227,46 +222,4 @@ int parse(FILE* source, unsigned short* memory, char* error_message) {
 }
 
 // Temporary main function for sscanf debugging
-
-int main() {
-    char test_line[] = "CMP AX, 0";
-    char instruction_str[32];
-    char arg1_str[32];
-    char arg2_str[32];
-
-    char* trimmed_line = trim_whitespace(test_line);
-
-    int num_parsed = sscanf(trimmed_line, "%s %31[^,],%s", instruction_str, arg1_str, arg2_str);
-
-    printf("Test line: '%s'\n", test_line);
-    printf("Trimmed line: '%s'\n", trimmed_line);
-    printf("num_parsed: %d\n", num_parsed);
-    printf("instruction_str: '%s'\n", instruction_str);
-    if (num_parsed >= 2) printf("arg1_str: '%s'\n", arg1_str);
-    if (num_parsed >= 3) printf("arg2_str: '%s'\n", arg2_str);
-    
-    // Test with spaces after comma
-    char test_line2[] = "CMP BX,  10";
-    trimmed_line = trim_whitespace(test_line2);
-    num_parsed = sscanf(trimmed_line, "%s %31[^,],%s", instruction_str, arg1_str, arg2_str);
-    printf("\nTest line 2: '%s'\n", test_line2);
-    printf("Trimmed line 2: '%s'\n", trimmed_line);
-    printf("num_parsed: %d\n", num_parsed);
-    printf("instruction_str: '%s'\n", instruction_str);
-    if (num_parsed >= 2) printf("arg1_str: '%s'\n", arg1_str);
-    if (num_parsed >= 3) printf("arg2_str: '%s'\n", arg2_str);
-    
-    // Test with no comma
-    char test_line3[] = "JMP 100";
-    trimmed_line = trim_whitespace(test_line3);
-    num_parsed = sscanf(trimmed_line, "%s %31[^,],%s", instruction_str, arg1_str, arg2_str);
-    printf("\nTest line 3: '%s'\n", test_line3);
-    printf("Trimmed line 3: '%s'\n", trimmed_line);
-    printf("num_parsed: %d\n", num_parsed);
-    printf("instruction_str: '%s'\n", instruction_str);
-    if (num_parsed >= 2) printf("arg1_str: '%s'\n", arg1_str);
-    if (num_parsed >= 3) printf("arg2_str: '%s'\n", arg2_str);
-    
-    return 0;
-}
 
