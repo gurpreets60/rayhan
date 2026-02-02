@@ -1,4 +1,4 @@
-# rayhan
+#Rayhan
 
 This is a virtual machine programmed in C.
 It is a 16 bit virtual machine: 65536 different possible values allowed in the registers.
